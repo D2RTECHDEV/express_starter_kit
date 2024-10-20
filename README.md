@@ -312,7 +312,7 @@ Note: API request information (request url, response code, timestamp, etc.) are 
 
 ## Linting
 
-Linting & code formatting is done using [Biome](https://biomejs.dev).
+Linting & code formatting is done using [Biome](https://biomejs.dev). Please make sure you have installed the [VS Code Extention](https://marketplace.visualstudio.com/items?itemName=biomejs.biome) to make it work.
 
 In this app, Biome is configured with some modifications.
 
