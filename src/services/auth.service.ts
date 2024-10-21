@@ -35,21 +35,11 @@ const loginUserWithEmailAndPassword = async (
 
 /**
  * Logout
- * @param {string} refreshToken
+ * @param {string} sessionToken
  * @returns {Promise<void>}
  */
-const logout = async (refreshToken: string): Promise<void> => {
-  const refreshTokenData = await prisma.token.findFirst({
-    where: {
-      token: refreshToken,
-      type: TokenType.REFRESH,
-      blacklisted: false,
-    },
-  });
-  if (!refreshTokenData) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Not found");
-  }
-  await prisma.token.delete({ where: { id: refreshTokenData.id } });
+const logout = async (sessionToken: string): Promise<void> => {
+  await tokenService.invalidateSession(sessionToken);
 };
 
 /**
