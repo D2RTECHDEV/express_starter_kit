@@ -156,7 +156,7 @@ const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
     sha256(new TextEncoder().encode(token))
   );
   const tokenData = await prisma.token.findFirst({
-    where: { token: hashedToken, type, blacklisted: false },
+    where: { token: hashedToken, blacklisted: false },
   });
   if (!tokenData) {
     throw new Error("Token not found");
