@@ -98,7 +98,13 @@ const validateSessionToken = async (
  * Invalidate session
  * @returns {Promise<void>}
  */
-const invalidateSession = async (sessionId: string): Promise<void> => {
+const invalidateSession = async (token: string): Promise<void> => {
+  const encoding = await import("@oslojs/encoding");
+  const { sha256 } = await import("@oslojs/crypto/sha2");
+
+  const sessionId = encoding.encodeHexLowerCase(
+    sha256(new TextEncoder().encode(token))
+  );
   await prisma.session.delete({ where: { id: sessionId } });
 };
 
