@@ -18,7 +18,7 @@ const login = {
 
 const logout = {
   body: Joi.object().keys({
-    refreshToken: Joi.string().required(),
+    sessionToken: Joi.string().required(),
   }),
 };
 
