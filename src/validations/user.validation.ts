@@ -23,13 +23,13 @@ const getUsers = {
 
 const getUser = {
   params: Joi.object().keys({
-    userId: Joi.number().integer(),
+    userId: Joi.string(),
   }),
 };
 
 const updateUser = {
   params: Joi.object().keys({
-    userId: Joi.number().integer(),
+    userId: Joi.string(),
   }),
   body: Joi.object()
     .keys({
