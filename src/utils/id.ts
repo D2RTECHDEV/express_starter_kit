@@ -1,10 +1,10 @@
+import { nanoid } from "nanoid";
+
 /**
  * Generate user id
  * @param {number} size
  * @returns {Promise<string>}
  */
-export const generateUserID = async (size: number): Promise<string> => {
-  const di = await import("@oslojs/encoding");
-  const buffer = crypto.getRandomValues(new Uint8Array(size));
-  return di.encodeBase32LowerCaseNoPadding(buffer);
+export const generateUserID = (size: number): string => {
+  return nanoid(size);
 };

@@ -232,7 +232,7 @@ describe("Auth routes", () => {
         where: { email: userOne.email },
       })) as User;
       const expires = moment().add(10, "minutes");
-      const resetPasswordToken = tokenService.generateSessionToken();
+      const resetPasswordToken = await tokenService.generateSessionToken();
       await tokenService.saveToken(
         resetPasswordToken,
         dbUserOne.id,
@@ -279,7 +279,7 @@ describe("Auth routes", () => {
         where: { email: userOne.email },
       })) as User;
       const expires = moment().add(10, "minutes");
-      const resetPasswordToken = tokenService.generateSessionToken();
+      const resetPasswordToken = await tokenService.generateSessionToken();
       await tokenService.saveToken(
         resetPasswordToken,
         dbUserOne.id,
@@ -301,7 +301,7 @@ describe("Auth routes", () => {
         where: { email: userOne.email },
       })) as User;
       const expires = moment().subtract(1, "minutes");
-      const resetPasswordToken = tokenService.generateSessionToken();
+      const resetPasswordToken = await tokenService.generateSessionToken();
       await tokenService.saveToken(
         resetPasswordToken,
         dbUserOne.id,
@@ -341,7 +341,7 @@ describe("Auth routes", () => {
         where: { email: userOne.email },
       })) as User;
       const expires = moment().add(10, "minutes");
-      const resetPasswordToken = tokenService.generateSessionToken();
+      const resetPasswordToken = await tokenService.generateSessionToken();
       await tokenService.saveToken(
         resetPasswordToken,
         dbUserOne.id,
@@ -426,7 +426,7 @@ describe("Auth routes", () => {
         where: { email: userOne.email },
       })) as User;
       const expires = moment().add(10, "minutes");
-      const verifyEmailToken = tokenService.generateSessionToken();
+      const verifyEmailToken = await tokenService.generateSessionToken();
       await tokenService.saveToken(
         verifyEmailToken,
         dbUserOne.id,
@@ -470,7 +470,7 @@ describe("Auth routes", () => {
         where: { email: userOne.email },
       })) as User;
       const expires = moment().add(10, "minutes");
-      const verifyEmailToken = tokenService.generateSessionToken();
+      const verifyEmailToken = await tokenService.generateSessionToken();
       await tokenService.saveToken(
         verifyEmailToken,
         dbUserOne.id,
@@ -492,7 +492,7 @@ describe("Auth routes", () => {
         where: { email: userOne.email },
       })) as User;
       const expires = moment().subtract(1, "minutes");
-      const verifyEmailToken = tokenService.generateSessionToken();
+      const verifyEmailToken = await tokenService.generateSessionToken();
       await tokenService.saveToken(
         verifyEmailToken,
         dbUserOne.id,
