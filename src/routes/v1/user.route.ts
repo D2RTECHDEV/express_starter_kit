@@ -133,8 +133,8 @@ export default router;
  *         name: page
  *         schema:
  *           type: integer
- *           minimum: 1
- *           default: 1
+ *           minimum: 0
+ *           default: 0
  *         description: Page number
  *     responses:
  *       "200":
