@@ -1,5 +1,5 @@
 module.exports = {
-  preset: "ts-jest",
+  // preset: "ts-jest",
   testEnvironment: "node",
   testEnvironmentOptions: {
     NODE_ENV: "test",
@@ -12,4 +12,5 @@ module.exports = {
     "tests",
   ],
   coverageReporters: ["text", "lcov", "clover", "html"],
+  transform: {},
 };
