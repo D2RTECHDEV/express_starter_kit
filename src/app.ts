@@ -1,17 +1,17 @@
-import express from "express";
+import express, { Express } from "express";
 import helmet from "helmet";
 import compression from "compression";
 import cors from "cors";
 import httpStatus from "http-status";
-import config from "./config/config.js";
 import morgan from "./config/morgan.js";
 import xss from "./middlewares/xss.js";
 import { authLimiter } from "./middlewares/rateLimiter.js";
 import routes from "./routes/v1";
 import { errorConverter, errorHandler } from "./middlewares/error.js";
 import ApiError from "./utils/ApiError.js";
+import config from "./config/config.js";
 
-const app = express();
+const app: Express = express();
 
 if (config.env !== "test") {
   app.use(morgan.successHandler);
