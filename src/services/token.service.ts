@@ -30,7 +30,8 @@ const generateSessionToken = async (): Promise<string> => {
  */
 const createSession = async (
   token: string,
-  userId: string
+  userId: string,
+  expiresAt?: Date
 ): Promise<Session> => {
   const encoding = await import("@oslojs/encoding");
   const { sha256 } = await import("@oslojs/crypto/sha2");
@@ -41,7 +42,7 @@ const createSession = async (
   const session: Session = {
     id: sessionId,
     userId,
-    expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+    expiresAt: expiresAt ?? new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
   };
   await prisma.session.create({
     data: session,
@@ -156,7 +157,7 @@ const verifyToken = async (token: string, type: TokenType): Promise<Token> => {
     sha256(new TextEncoder().encode(token))
   );
   const tokenData = await prisma.token.findFirst({
-    where: { token: hashedToken, blacklisted: false },
+    where: { token: hashedToken, type, blacklisted: false },
   });
   if (!tokenData) {
     throw new Error("Token not found");
