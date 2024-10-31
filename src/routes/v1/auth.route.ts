@@ -1,10 +1,10 @@
-import express from "express";
+import express, { Router } from "express";
 import validate from "../../middlewares/validate";
 import authValidation from "../../validations/auth.validation";
 import { authController } from "../../controllers";
 import auth from "../../middlewares/auth";
 
-const router = express.Router();
+const router: Router = express.Router();
 
 router.post(
   "/register",
