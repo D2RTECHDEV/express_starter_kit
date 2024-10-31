@@ -9,8 +9,6 @@ services:
       - MYSQL_ROOT_PASSWORD=secret
     ports:
       - '3306:3306'
-    volumes: 
-      - db:/var/lib/mysqlql/data
 volumes:
   db:
     driver: local
