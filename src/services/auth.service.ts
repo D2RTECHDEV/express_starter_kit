@@ -6,6 +6,7 @@ import { TokenType, User } from "@prisma/client";
 import prisma from "../client.js";
 import { encryptPassword, isPasswordMatch } from "../utils/encryption.js";
 import exclude from "../utils/exclude.js";
+import logger from "../config/logger.js";
 
 /**
  * Login with username and password
@@ -53,8 +54,15 @@ const resetPassword = async (
   newPassword: string
 ): Promise<void> => {
   try {
+    const encoding = await import("@oslojs/encoding");
+    const { sha256 } = await import("@oslojs/crypto/sha2");
+
+    const hashedToken = encoding.encodeHexLowerCase(
+      sha256(new TextEncoder().encode(resetPasswordToken))
+    );
+
     const resetPasswordTokenData = await tokenService.verifyToken(
-      resetPasswordToken,
+      hashedToken,
       TokenType.RESET_PASSWORD
     );
     const user = await userService.getUserById(resetPasswordTokenData.userId);
@@ -67,6 +75,7 @@ const resetPassword = async (
       where: { userId: user.id, type: TokenType.RESET_PASSWORD },
     });
   } catch (error) {
+    logger.error(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, "Password reset failed");
   }
 };
