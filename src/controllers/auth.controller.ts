@@ -45,6 +45,8 @@ const forgotPassword = catchAsync(async (req, res) => {
 });
 
 const resetPassword = catchAsync(async (req, res) => {
+  console.log(req.query.token, req.body.password);
+
   await authService.resetPassword(req.query.token as string, req.body.password);
   res.status(httpStatus.NO_CONTENT).send();
 });
