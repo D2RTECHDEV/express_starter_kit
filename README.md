@@ -120,7 +120,7 @@ Database:
 # push changes to db
 pnpm db:push
 
-# start prisma studio
+# start prisma studio. This will open up your browser window and you shall be able to view the DB model and data within the tables.
 pnpm db:studio
 ```
 
