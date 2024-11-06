@@ -6,6 +6,18 @@ This project is an adaptation of the project [RESTful API Node Server Boilerplat
 
 ## Quick Start
 
+#### Prerequisites
+
+- **Node.js**: Ensure you have Node.js installed (version 18.x or above is recommended). You can download it from [Node.js Official Website](https://nodejs.org/).
+- **MySQL**: Install MySQL (version 5.7 or above). You’ll need this for database operations. Follow [MySQL Installation Guide](https://dev.mysql.com/doc/refman/5.7/en/installing.html) for setup instructions.
+- **Docker**: Required for running the test database in a containerized environment. [Install Docker](https://docs.docker.com/get-docker/) if it’s not already installed.
+- **pnpm**: Install `pnpm` (version 6.x or above) for efficient package management. You can install it globally via:
+   ```bash
+   npm install -g pnpm
+   ```
+
+
+
 Clone the repo:
 
 ```bash
@@ -14,10 +26,10 @@ cd express_starter_kit
 npx rimraf ./.git
 ```
 
-Install pnpm if you haven't already
+Initialise git repo
 
 ```bash
-npm install -g pnpm
+git init
 ```
 
 Install the dependencies:
@@ -38,6 +50,7 @@ cp .env.example .env
 
 - [ExpressJS Boilerplate](#expressjs-boilerplate)
   - [Quick Start](#quick-start)
+      - [Prerequisites](#prerequisites)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Project Structure](#project-structure)
@@ -51,6 +64,21 @@ cp .env.example .env
   - [Authorization](#authorization)
   - [Logging](#logging)
   - [Linting](#linting)
+  - [Testing](#testing)
+      - [1. Setting Up the Test Environment](#1-setting-up-the-test-environment)
+      - [2. Organizing Test Files](#2-organizing-test-files)
+      - [3. Writing Test Cases in TypeScript](#3-writing-test-cases-in-typescript)
+      - [4. Mocking Dependencies](#4-mocking-dependencies)
+      - [5. Running Tests](#5-running-tests)
+      - [6. Writing Descriptive Tests](#6-writing-descriptive-tests)
+      - [7. Stopping the Test Database](#7-stopping-the-test-database)
+  - [Add New Functionality](#add-new-functionality)
+      - [1. Define the Route and Controller](#1-define-the-route-and-controller)
+      - [2. Create the Controller](#2-create-the-controller)
+      - [3. Add Business Logic in the Service Layer](#3-add-business-logic-in-the-service-layer)
+      - [4. Define Validation Schemas](#4-define-validation-schemas)
+      - [5. Update Swagger Documentation](#5-update-swagger-documentation)
+      - [6. Test the New Route](#6-test-the-new-route)
 
 ## Features
 
@@ -58,7 +86,7 @@ cp .env.example .env
 - **Authentication and authorization**: session based authentication mechanism 
 - **Validation**: request data validation using [Joi](https://joi.dev)
 - **Logging**: using [winston](https://github.com/winstonjs/winston) and [morgan](https://github.com/expressjs/morgan)
-- **Testing**: unit and integration tests using [Jest](https://jestjs.io)
+- **Testing**: unit and integration tests using [Vitest](https://vitest.dev)
 - **Error handling**: centralized error handling mechanism
 - **API documentation**: with [swagger-jsdoc](https://github.com/Surnet/swagger-jsdoc) and [swagger-ui-express](https://github.com/scottie1984/swagger-ui-express)
 - **Process management**: advanced production process management using [PM2](https://pm2.keymetrics.io)
@@ -70,7 +98,6 @@ cp .env.example .env
 - **Compression**: gzip compression with [compression](https://github.com/expressjs/compression)
 - **Test**: Superfast unit testing with [vitest](https://vitest.dev)
 - **Code coverage**: Code coverage with [vitest](https://vitest.dev)
-- `future` **Code quality**:
 - **Git hooks**: with [Husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
 - **Linting**: with [Biome](https://biomejs.dev)
 - **Editor config**: consistent editor configuration using [EditorConfig](https://editorconfig.org)
@@ -134,16 +161,6 @@ Running in production:
 
 ```bash
 pnpm start
-```
-
-Testing:
-
-```bash
-# run all tests
-pnpm test
-
-# run all tests in watch mode
-pnpm test:watch
 ```
 
 Linting:
@@ -340,3 +357,270 @@ To modify the Biome list & formatting configuration, update the `biome.json` fil
 To prevent a certain file or directory from being linted, add it to `"ignore": ["**/node_modules", "**/bin"]` array.
 
 To maintain a consistent coding style across different IDEs, the project contains `.editorconfig`
+
+
+## Testing
+
+This project uses **Vitest** for testing with **TypeScript** support. Docker is also used to provide a test database environment. Please follow these steps to add new test cases.
+
+#### 1. Setting Up the Test Environment
+
+Before adding tests, ensure that the Docker test database is running. Start it by running:
+
+```bash
+docker-compose -f docker-compose.only-db-test.yml up -d
+```
+
+You may also need to push your database schema to the test database:
+
+```bash
+pnpm db:push
+```
+
+#### 2. Organizing Test Files
+
+All test files are organized within the `/tests` directory. Follow this structure:
+
+```
+tests/
+ ├── fixtures/       # Sample data and mock files used across tests
+ ├── integration/    # Integration tests for modules and components
+ └── utils/          # Utility functions for tests, such as mocks and helpers
+```
+
+1. **Integration Tests**: Place tests that assess how different modules work together in `tests/integration`. Name these files with `.test.ts` or `.spec.ts` suffixes.
+
+2. **Fixtures**: Place sample data and reusable mock files in `tests/fixtures`.
+
+3. **Test Utilities**: Helper functions or utilities used across tests, such as mock functions, go in `tests/utils`.
+
+#### 3. Writing Test Cases in TypeScript
+
+Write tests following the **Arrange-Act-Assert (AAA)** pattern:
+
+- **Arrange**: Set up test conditions and input.
+- **Act**: Execute the function or module under test.
+- **Assert**: Check the output or behavior.
+
+For example, here’s a TypeScript test for a `createUser` function in `auth.service.ts`:
+
+```typescript
+// tests/integration/auth.service.test.ts
+import { describe, it, expect } from 'vitest';
+import { createUser } from '../../src/services/auth.service';
+
+describe('Auth Service - createUser', () => {
+  it('should create a new user with valid input', async () => {
+    const input = { username: 'testuser', email: 'test@example.com' };
+    const result = await createUser(input);
+    expect(result).toHaveProperty('id');
+    expect(result.username).toBe('testuser');
+  });
+
+  it('should throw an error if email is missing', async () => {
+    const input = { username: 'testuser' };
+    await expect(createUser(input)).rejects.toThrow('Email is required');
+  });
+});
+```
+
+#### 4. Mocking Dependencies
+
+To mock dependencies or isolate functionality under test, use **Vitest**’s `vi.fn()` and place shared mocks in `tests/utils`.
+
+Example:
+```typescript
+// tests/utils/mockDatabase.ts
+import { vi } from 'vitest';
+export const mockDatabaseCall = vi.fn().mockResolvedValue({ id: 1 });
+```
+
+#### 5. Running Tests
+
+To run all tests:
+
+```bash
+pnpm test
+```
+
+To view a UI for test results (useful for debugging):
+
+```bash
+pnpm test:ui
+```
+
+To run tests with coverage:
+
+```bash
+pnpm coverage
+```
+
+#### 6. Writing Descriptive Tests
+
+- **Use descriptive test names**: Clearly explain the expected behavior, e.g., “should create a new user with valid input.”
+- **Cover edge cases**: Consider a variety of scenarios, such as invalid inputs or boundary values.
+
+#### 7. Stopping the Test Database
+
+After running tests, you can stop the Docker container for the test database:
+
+```bash
+docker-compose -f docker-compose.only-db-test.yml down
+```
+
+By following these guidelines, you can contribute well-structured and reliable tests to this project.
+
+## Add New Functionality
+
+This project follows a modular structure for components and routes, using **Express**, **Prisma** for data modeling, **Joi** for validation, and **TypeScript**. Follow these steps to create a new component/route.
+
+#### 1. Define the Route and Controller
+
+1. **Create a Route File**: Navigate to `src/routes` and create a new route file. For example, if you’re creating a new route for `products`, add a `products.route.ts` file.
+  
+   ```typescript
+   // src/routes/products.route.ts
+   import express from 'express';
+   import { validate } from '../middlewares/validate';
+   import productValidation from '../validations/product.validation';
+   import productController from '../controllers/product.controller';
+
+   const router = express.Router();
+
+   router
+     .route('/')
+     .post(validate(productValidation.createProduct), productController.createProduct)
+     .get(productController.getProducts);
+
+   router
+     .route('/:productId')
+     .get(productController.getProduct)
+     .patch(validate(productValidation.updateProduct), productController.updateProduct)
+     .delete(productController.deleteProduct);
+
+   export default router;
+   ```
+
+2. **Add Route to Main Router**: Register the new route in the main router (`src/routes/index.ts`):
+
+   ```typescript
+   import productRoute from './products.route';
+
+   const router = express.Router();
+
+   router.use('/products', productRoute);
+   ```
+
+#### 2. Create the Controller
+
+Controllers are responsible for handling the logic of each route.
+
+1. **Create a Controller File**: Add a new file in `src/controllers`, such as `product.controller.ts`.
+
+   ```typescript
+   // src/controllers/product.controller.ts
+   import { Request, Response } from 'express';
+   import { ProductService } from '../services/product.service';
+
+   export const createProduct = async (req: Request, res: Response) => {
+     const product = await ProductService.createProduct(req.body);
+     res.status(201).json(product);
+   };
+
+   export const getProducts = async (req: Request, res: Response) => {
+     const products = await ProductService.getProducts();
+     res.json(products);
+   };
+
+   // Other controller functions for getProduct, updateProduct, deleteProduct
+   ```
+
+#### 3. Add Business Logic in the Service Layer
+
+Add business logic functions for the component in `src/services`. This keeps the controller clean and separates the logic.
+
+```typescript
+// src/services/product.service.ts
+import { prisma } from '../config/db';
+
+export const createProduct = async (data: any) => {
+  return prisma.product.create({ data });
+};
+
+export const getProducts = async () => {
+  return prisma.product.findMany();
+};
+
+// Additional functions for updateProduct, deleteProduct, getProductById, etc.
+```
+
+#### 4. Define Validation Schemas
+
+Add a Joi schema to validate request data in `src/validations`.
+
+```typescript
+// src/validations/product.validation.ts
+import Joi from 'joi';
+
+export const createProduct = Joi.object({
+  name: Joi.string().required(),
+  price: Joi.number().positive().required(),
+  description: Joi.string().optional(),
+});
+
+export const updateProduct = Joi.object({
+  name: Joi.string(),
+  price: Joi.number().positive(),
+  description: Joi.string(),
+});
+```
+
+#### 5. Update Swagger Documentation
+
+To document the new route, update the API documentation by adding Swagger definitions in `src/docs`. You can include comments in `product.route.ts` like this:
+
+```typescript
+/**
+ * @swagger
+ * /products:
+ *   post:
+ *     summary: Create a product
+ *     tags: [Products]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       201:
+ *         description: Product created
+ *       400:
+ *         description: Validation error
+ */
+```
+
+#### 6. Test the New Route
+
+Write integration tests for the new component in `tests/integration`. Ensure that each route is tested for success and failure cases.
+
+```typescript
+// tests/integration/product.route.test.ts
+import request from 'supertest';
+import app from '../../src/app';
+
+describe('Product Routes', () => {
+  it('should create a new product', async () => {
+    const res = await request(app).post('/v1/products').send({
+      name: 'Test Product',
+      price: 19.99,
+    });
+    expect(res.statusCode).toEqual(201);
+    expect(res.body).toHaveProperty('id');
+  });
+
+  // Additional tests for get, update, delete
+});
+```
+
+By following these steps, you can create, validate, and document new components/routes effectively within the project.
