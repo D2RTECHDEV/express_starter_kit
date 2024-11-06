@@ -114,6 +114,16 @@ EMAIL_FROM=support@yourapp.com
 
 ## Commands
 
+Database:
+
+```bash
+# push changes to db
+pnpm db:push
+
+# start prisma studio
+pnpm db:studio
+```
+
 Running locally:
 
 ```bash
@@ -134,16 +144,6 @@ pnpm test
 
 # run all tests in watch mode
 pnpm test:watch
-```
-
-Database:
-
-```bash
-# push changes to db
-pnpm db:push
-
-# start prisma studio
-pnpm db:studio
 ```
 
 Linting:
