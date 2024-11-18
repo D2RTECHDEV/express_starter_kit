@@ -388,7 +388,9 @@ This project uses **Vitest** for testing with **TypeScript** support. Docker is 
 
 #### 1. Setting Up the Test Environment
 
-Before adding tests, ensure that the Docker test database is running. Start it by running:
+Before adding tests, 
+a. Ensure that you have validated the content of docker-compose.only-db-test.yml file. Please validate the MYSQL password matches with one in the .env file.
+b. Ensure that the Docker test database is running. You can start it by running below command:
 
 ```bash
 docker-compose -f docker-compose.only-db-test.yml up -d
