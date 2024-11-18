@@ -6,7 +6,7 @@ services:
     restart: always
     container_name: mysqldb-util-test
     environment:
-      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=root
     ports:
       - '3306:3306'
 volumes:
